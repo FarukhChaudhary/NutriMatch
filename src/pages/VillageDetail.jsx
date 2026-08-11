@@ -93,7 +93,7 @@ export default function VillageDetail() {
               <p className="font-semibold text-amber-800 dark:text-amber-300 text-sm">{t('ngo.overlapDetected')}</p>
               <p className="text-amber-700 dark:text-amber-400 text-sm">{t('village.overlapWarning')}</p>
               <p className="text-xs text-amber-600 dark:text-amber-500 mt-1">
-                Overlapping deficiencies: {overlapDefs.join(', ')}
+                {t('village.overlappingDeficiencies')}: {overlapDefs.map(d => t(`deficiency.${d}`)).join(', ')}
               </p>
             </div>
           </div>

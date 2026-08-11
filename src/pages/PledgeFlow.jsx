@@ -83,7 +83,7 @@ export default function PledgeFlow() {
             <div className="mt-3 flex items-start gap-2 p-3 bg-warm-50 dark:bg-warm-800 rounded-xl text-sm">
               <BookOpen size={14} className="text-warm-400 mt-0.5 flex-shrink-0" />
               <p className="text-warm-600 dark:text-warm-400">
-                <strong>{topDef.prevalence_pct}%</strong> of children show signs of {DEFICIENCY_LABELS[topDef.deficiency_type]} deficiency (source: {defs[0]?.source}).
+                <strong>{topDef.prevalence_pct}%</strong> {t('common.children')} — {t(`deficiency.${topDef.deficiency_type}`)} ({t('common.source')}: {defs[0]?.source}).
               </p>
             </div>
           )}
@@ -92,8 +92,8 @@ export default function PledgeFlow() {
         {/* Step 1: Choose recommendation */}
         {step === 1 && (
           <div>
-            <h1 className="font-display font-bold text-2xl text-warm-900 dark:text-warm-100 mb-1">What would you like to support?</h1>
-            <p className="text-warm-500 dark:text-warm-400 text-sm mb-6">Choose an intervention that's been recommended for this village.</p>
+            <h1 className="font-display font-bold text-2xl text-warm-900 dark:text-warm-100 mb-1">{t('recommendation.title')}</h1>
+            <p className="text-warm-500 dark:text-warm-400 text-sm mb-6">{t('recommendation.subtitle')}</p>
             <div className="space-y-3 mb-6">
               {recommendations.map((rec, i) => (
                 <button
@@ -112,10 +112,14 @@ export default function PledgeFlow() {
                       i === 0 ? 'bg-yellow-400 text-yellow-900' : i === 1 ? 'bg-slate-300 text-slate-800' : 'bg-amber-600 text-amber-100'
                     )}>#{i + 1}</span>
                     <div className="flex-1 min-w-0">
-                      <p className="font-semibold text-warm-900 dark:text-warm-100">{rec.food_name}</p>
-                      <p className="text-xs text-warm-500 dark:text-warm-400 mt-0.5 line-clamp-2">{rec.description}</p>
+                      <p className="font-semibold text-warm-900 dark:text-warm-100">
+                        {t(`foods.${rec.id}.name`) !== `foods.${rec.id}.name` ? t(`foods.${rec.id}.name`) : rec.food_name}
+                      </p>
+                      <p className="text-xs text-warm-500 dark:text-warm-400 mt-0.5 line-clamp-2">
+                        {t(`foods.${rec.id}.description`) !== `foods.${rec.id}.description` ? t(`foods.${rec.id}.description`) : rec.description}
+                      </p>
                       <span className="inline-block mt-1.5 text-xs px-2 py-0.5 rounded-full bg-warm-100 dark:bg-warm-700 text-warm-600 dark:text-warm-400">
-                        {DEFICIENCY_LABELS[rec.deficiency_type]}
+                        {t(`deficiency.${rec.deficiency_type}`)}
                       </span>
                     </div>
                     {chosenRec?.id === rec.id && (
@@ -130,7 +134,7 @@ export default function PledgeFlow() {
               disabled={!chosenRec}
               className="w-full py-3 bg-saffron-500 hover:bg-saffron-600 disabled:bg-saffron-200 text-white rounded-xl font-semibold transition-colors shadow-sm"
             >
-              Continue →
+              {t('common.submit')} →
             </button>
           </div>
         )}
@@ -139,13 +143,17 @@ export default function PledgeFlow() {
         {step === 2 && (
           <div>
             <h1 className="font-display font-bold text-2xl text-warm-900 dark:text-warm-100 mb-1">{t('donor.pledge')}</h1>
-            <p className="text-warm-500 dark:text-warm-400 text-sm mb-6">Every contribution directly supports children in {village.name}.</p>
+            <p className="text-warm-500 dark:text-warm-400 text-sm mb-6">{village.name}</p>
 
             {/* Chosen rec summary */}
             <div className="bg-saffron-50 dark:bg-saffron-900/20 border border-saffron-200 dark:border-saffron-800 rounded-2xl p-4 mb-5">
-              <p className="text-xs font-semibold text-saffron-700 dark:text-saffron-400 uppercase tracking-wider mb-1">Supporting</p>
-              <p className="font-semibold text-warm-900 dark:text-warm-100">{chosenRec?.food_name}</p>
-              <p className="text-xs text-warm-500 dark:text-warm-400 mt-0.5">for {DEFICIENCY_LABELS[chosenRec?.deficiency_type]} deficiency</p>
+              <p className="text-xs font-semibold text-saffron-700 dark:text-saffron-400 uppercase tracking-wider mb-1">{t('donor.pledgeRecommendation')}</p>
+              <p className="font-semibold text-warm-900 dark:text-warm-100">
+                {t(`foods.${chosenRec?.id}.name`) !== `foods.${chosenRec?.id}.name` ? t(`foods.${chosenRec?.id}.name`) : chosenRec?.food_name}
+              </p>
+              <p className="text-xs text-warm-500 dark:text-warm-400 mt-0.5">
+                {t(`deficiency.${chosenRec?.deficiency_type}`)}
+              </p>
             </div>
 
             <form onSubmit={handleSubmitPledge} className="space-y-5">

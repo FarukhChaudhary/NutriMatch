@@ -57,7 +57,7 @@ export default function RecommendationCard({ rec, rank, villageId }) {
         <div className="flex-1 min-w-0">
           <div className="flex items-start justify-between gap-2">
             <h3 className="font-display font-semibold text-warm-900 dark:text-warm-100 text-base leading-tight">
-              {rec.food_name}
+              {t(`foods.${rec.id}.name`) !== `foods.${rec.id}.name` ? t(`foods.${rec.id}.name`) : rec.food_name}
             </h3>
             <span className="shrink-0 flex items-center gap-1 text-sm font-bold text-saffron-600 dark:text-saffron-400">
               <Award size={14} />
@@ -65,21 +65,23 @@ export default function RecommendationCard({ rec, rank, villageId }) {
             </span>
           </div>
           <span className="inline-block mt-1 text-xs px-2 py-0.5 rounded-full bg-warm-100 dark:bg-warm-800 text-warm-600 dark:text-warm-400 font-medium">
-            {DEFICIENCY_LABELS[rec.deficiency_type]}
+            {t(`deficiency.${rec.deficiency_type}`)}
           </span>
         </div>
       </div>
 
       {/* Description */}
       <div className="px-5 pb-4">
-        <p className="text-sm text-warm-700 dark:text-warm-300 leading-relaxed">{rec.description}</p>
+        <p className="text-sm text-warm-700 dark:text-warm-300 leading-relaxed">
+          {t(`foods.${rec.id}.description`) !== `foods.${rec.id}.description` ? t(`foods.${rec.id}.description`) : rec.description}
+        </p>
       </div>
 
       {/* Score breakdown */}
       <div className="px-5 pb-4 space-y-2.5">
         <p className="text-xs font-semibold text-warm-500 dark:text-warm-400 uppercase tracking-wider flex items-center gap-1.5">
           <TrendingUp size={12} />
-          {t('recommendation.score')} Breakdown
+          {t('recommendation.scoreBreakdown')}
         </p>
         <ScoreBar label={t('recommendation.nutrientMatch')} value={rec.nutrient_match_score} color="bg-red-400" />
         <ScoreBar label={t('recommendation.localAvailability')} value={rec.local_availability_score} color="bg-teal-400" />

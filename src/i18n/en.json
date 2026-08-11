@@ -65,6 +65,7 @@
     "childrenAffected": "children affected",
     "dataSource": "Data Source",
     "overlapWarning": "⚠ Another organisation is already active here with overlapping aid.",
+    "overlappingDeficiencies": "Overlapping deficiencies",
     "noActivity": "No NGO activity logged for this village yet.",
     "noPledges": "No pledges made for this village yet."
   },
@@ -72,6 +73,7 @@
     "title": "Ranked Recommendations",
     "subtitle": "Top food and intervention recommendations based on this village's deficiency profile",
     "score": "Match Score",
+    "scoreBreakdown": "Score Breakdown",
     "nutrientMatch": "Nutrient Match",
     "localAvailability": "Local Availability",
     "cost": "Cost Score",
@@ -138,5 +140,71 @@
     "loginError": "Invalid email or password.",
     "noAccount": "Don't have an account?",
     "haveAccount": "Already have an account?"
+  },
+  "foods": {
+    "r1": {
+      "name": "Fortified Rice",
+      "description": "Iron-fortified rice distributed through PDS reaches households directly and is culturally accepted across all regions."
+    },
+    "r2": {
+      "name": "Jaggery (Gur)",
+      "description": "Traditional jaggery contains non-heme iron and is widely available, affordable, and culturally embedded across rural India."
+    },
+    "r3": {
+      "name": "Dried Lentils (Masoor Dal)",
+      "description": "Lentils are a high-iron legume with long shelf life, storable without refrigeration, and central to existing food habits."
+    },
+    "r4": {
+      "name": "Drumstick Leaves (Moringa)",
+      "description": "Moringa leaves are exceptionally rich in iron and can be grown locally; limited shelf life is a distribution challenge."
+    },
+    "r5": {
+      "name": "Vitamin A Supplementation Capsules",
+      "description": "Biannual Vitamin A supplementation through ASHA workers is the most direct, clinically validated intervention for severe deficiency."
+    },
+    "r6": {
+      "name": "Sweet Potato (Orange Flesh)",
+      "description": "Orange-fleshed sweet potato is a biofortified crop with high beta-carotene, suitable for home gardening programs."
+    },
+    "r7": {
+      "name": "Carrot & Leafy Vegetable Mix",
+      "description": "Seasonal vegetable mixes high in carotenoids; best distributed fresh through Anganwadi centres for maximum potency."
+    },
+    "r8": {
+      "name": "Fortified Edible Oil",
+      "description": "Vitamin A-fortified edible oil integrates into cooking without behavior change and has long shelf life."
+    },
+    "r9": {
+      "name": "Zinc-ORS Supplementation",
+      "description": "Zinc-ORS combination tablets are recommended for children under 5 during diarrhoea episodes and as a preventive supplement."
+    },
+    "r10": {
+      "name": "Sesame Seeds (Til)",
+      "description": "Sesame seeds are a high-zinc food with excellent shelf life, available year-round, and used in traditional snacks (chikki)."
+    },
+    "r11": {
+      "name": "Pumpkin Seeds",
+      "description": "Pumpkin seeds are zinc-dense with a neutral flavour and can be added to existing snack distributions."
+    },
+    "r12": {
+      "name": "Iodised Salt (Double Fortified)",
+      "description": "Double-fortified iodised salt (iron + iodine) is the most cost-effective, scalable intervention for iodine deficiency."
+    },
+    "r13": {
+      "name": "Iodine Supplementation Drops",
+      "description": "Iodine drops administered via health workers for areas where iodised salt uptake remains low."
+    },
+    "r14": {
+      "name": "Folic Acid Tablets (IFA Programme)",
+      "description": "Weekly IFA tablets distributed through government WIFS programme to adolescent girls and women — high coverage, low cost."
+    },
+    "r15": {
+      "name": "Fortified Wheat Flour (Atta)",
+      "description": "Folate-fortified atta distributed through PDS integrates with existing food distribution with no additional behavior change."
+    },
+    "r16": {
+      "name": "Green Leafy Vegetables Bundle",
+      "description": "Spinach, methi, and amaranth are high in folate; best distributed fresh near source through Anganwadi or kitchen gardens."
+    }
   }
 }
