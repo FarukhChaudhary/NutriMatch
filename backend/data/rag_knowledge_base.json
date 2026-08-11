@@ -1,0 +1,67 @@
+[
+  {
+    "id": "doc-nfhs5-anaemia-01",
+    "title": "National Family Health Survey (NFHS-5) 2019-21 District Indicator Guidelines",
+    "organization": "Ministry of Health and Family Welfare (MoHFW) / IIPS Mumbai",
+    "publication_date": "2021-12-01",
+    "url": "https://rchiips.org/nfhs/nfhs5.shtml",
+    "document_type": "national_survey",
+    "topic": "child_anaemia",
+    "geographic_scope": "district",
+    "population_group": "children_6_59_months",
+    "source_authority": "MoHFW / IIPS",
+    "content": "According to NFHS-5 (2019-21), child anaemia is defined as hemoglobin level under 11.0 g/dl in children age 6-59 months. Districts such as Washim (71.2%), Bahraich (78.6%), Palghar (69.5%), and Barmer (67.9%) report high anaemia prevalence, requiring targeted dietary fortification and iron-folic acid supplementation."
+  },
+  {
+    "id": "doc-icmr-nin-ifct-01",
+    "title": "Indian Food Composition Tables (IFCT 2017)",
+    "organization": "ICMR - National Institute of Nutrition (NIN), Hyderabad",
+    "publication_date": "2017-01-01",
+    "url": "https://ifct2017.github.io",
+    "document_type": "food_composition_table",
+    "topic": "iron_zinc_folate_composition",
+    "geographic_scope": "national",
+    "population_group": "general_population",
+    "source_authority": "ICMR-NIN",
+    "content": "ICMR-NIN IFCT 2017 provides verified micronutrient values for Indian foods per 100g: Code A012 Sugarcane Jaggery (Gur) contains 11.4mg iron; Code B004 Masoor Dal contains 7.6mg iron and 145mcg folate; Code D021 Moringa Leaves contain 28.2mg iron and 11,300mcg Vitamin A (beta-carotene); Code H010 Sesame Seeds contain 7.8mg zinc and 14.6mg iron."
+  },
+  {
+    "id": "doc-fssai-fortification-01",
+    "title": "FSSAI Operational Guidelines on Food Fortification",
+    "organization": "Food Safety and Standards Authority of India (FSSAI)",
+    "publication_date": "2018-08-15",
+    "url": "https://fortification.fssai.gov.in",
+    "document_type": "regulatory_standard",
+    "topic": "food_fortification",
+    "geographic_scope": "national",
+    "population_group": "general_population",
+    "source_authority": "FSSAI",
+    "content": "FSSAI standards mandate Fortified Rice Kernels (FRK) to contain 28mg-42.5mg iron per kg. Double Fortified Salt (DFS) provides 30 PPM Iodine and 800-1100 PPM Iron, serving as a cost-effective universal intervention for simultaneous iron and iodine deficiencies without requiring dietary behavior changes."
+  },
+  {
+    "id": "doc-mohfw-amb-01",
+    "title": "Anemia Mukt Bharat (AMB) & WIFS Operational Guidelines",
+    "organization": "Ministry of Health and Family Welfare (MoHFW), Govt. of India",
+    "publication_date": "2018-04-01",
+    "url": "https://anemiamuktbharat.info",
+    "document_type": "program_guideline",
+    "topic": "ifa_supplementation",
+    "geographic_scope": "national",
+    "population_group": "children_and_adolescents",
+    "source_authority": "MoHFW",
+    "content": "Under the Anemia Mukt Bharat strategy and WIFS programme, weekly Iron and Folic Acid (IFA) tablets containing 60mg elemental iron and 500mcg Folic Acid are distributed to adolescent girls and women, while pediatric IFA syrup (20mg elemental iron + 100mcg folic acid per ml) is provided to children 6-59 months."
+  },
+  {
+    "id": "doc-who-zinc-ors-01",
+    "title": "WHO Guideline: Zinc Supplementation in Diarrhoea & Malnutrition",
+    "organization": "World Health Organization (WHO)",
+    "publication_date": "2023-03-01",
+    "url": "https://www.who.int/health-topics/micronutrients",
+    "document_type": "clinical_guideline",
+    "topic": "zinc_supplementation",
+    "geographic_scope": "global",
+    "population_group": "children_0_5",
+    "source_authority": "WHO",
+    "content": "WHO recommends 20mg daily zinc supplementation for 10-14 days alongside Oral Rehydration Salts (ORS) for children under 5 during diarrhoeal episodes to reduce duration and prevent recurrent stunted growth associated with zinc deficiency."
+  }
+]

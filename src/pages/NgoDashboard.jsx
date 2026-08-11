@@ -1,10 +1,11 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
 import { useAuth } from '../context/AuthContext';
 import { VILLAGES, DEFICIENCY_RECORDS, getTopRecommendations, NGO_ACTIVITIES } from '../data/mockData';
 import { AlertTriangle, Plus, CheckCircle, X, Activity, Users, Clock } from 'lucide-react';
 import { DeficiencyBadge } from '../components/DeficiencyBadge';
+import AidGapMatrix from '../components/AidGapMatrix';
 import clsx from 'clsx';
 
 const DEFICIENCY_TYPES = ['iron', 'vitamin_a', 'zinc', 'iodine', 'folate'];
@@ -12,6 +13,7 @@ const DEFICIENCY_TYPES = ['iron', 'vitamin_a', 'zinc', 'iodine', 'folate'];
 export default function NgoDashboard() {
   const { t, formatDate } = useLanguage();
   const { user } = useAuth();
+  const navigate = useNavigate();
 
   const [activities, setActivities] = useState(
     NGO_ACTIVITIES.map(a => ({ ...a }))
@@ -49,12 +51,13 @@ export default function NgoDashboard() {
       ngo_id: user?.id ?? 'ngo1',
       ...form,
       status: 'active',
+      end_date: null,
     };
     setActivities(prev => [newActivity, ...prev]);
     setForm({ village_id: '', item_distributed: '', deficiency_addressed: 'iron', start_date: new Date().toISOString().split('T')[0], notes: '' });
     setShowForm(false);
     setFormSuccess(true);
-    setTimeout(() => setFormSuccess(false), 3000);
+    setTimeout(() => setFormSuccess(false), 4000);
   };
 
   const markComplete = (id) => {

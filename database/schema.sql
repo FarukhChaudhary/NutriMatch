@@ -114,3 +114,42 @@ CREATE TABLE IF NOT EXISTS ifct_foods (
   created_at TIMESTAMP DEFAULT NOW()
 );
 
+-- Phase 2 Evidence Foundation Table
+CREATE TABLE IF NOT EXISTS evidence_records (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  indicator_code VARCHAR(100) NOT NULL,
+  indicator_name TEXT NOT NULL,
+  value DECIMAL(7,2) NOT NULL,
+  unit VARCHAR(20) DEFAULT '%',
+  
+  -- Geographic Resolution
+  geography_level VARCHAR(20) NOT NULL CHECK (geography_level IN ('country', 'state', 'district', 'block', 'village')),
+  geography_id VARCHAR(100) NOT NULL,
+  geography_name VARCHAR(255) NOT NULL,
+  source_geography VARCHAR(255) NOT NULL,
+  
+  -- Population Specificity
+  population_group VARCHAR(100) NOT NULL CHECK (population_group IN ('children_0_5', 'children_6_59_months', 'school_age_children', 'adolescent_girls', 'pregnant_women', 'lactating_women', 'general_population')),
+  
+  -- Source & Recency Metadata
+  source_authority VARCHAR(255) NOT NULL,
+  source_document VARCHAR(255) NOT NULL,
+  survey_year VARCHAR(50) NOT NULL,
+  source_url TEXT,
+  evidence_type VARCHAR(50) DEFAULT 'survey' CHECK (evidence_type IN ('survey', 'clinical_study', 'fortification_standard', 'census', 'model_estimate')),
+  
+  -- Granular Confidence Model (Separated metrics)
+  source_reliability VARCHAR(10) NOT NULL CHECK (source_reliability IN ('HIGH', 'MEDIUM', 'LOW')),
+  geography_specificity VARCHAR(10) NOT NULL CHECK (geography_specificity IN ('HIGH', 'MEDIUM', 'LOW')),
+  population_specificity VARCHAR(10) NOT NULL CHECK (population_specificity IN ('HIGH', 'MEDIUM', 'LOW')),
+  data_recency VARCHAR(10) NOT NULL CHECK (data_recency IN ('HIGH', 'MEDIUM', 'LOW')),
+  overall_confidence VARCHAR(10) NOT NULL CHECK (overall_confidence IN ('HIGH', 'MEDIUM', 'LOW')),
+  
+  created_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_evidence_geography ON evidence_records(geography_level, geography_name);
+CREATE INDEX IF NOT EXISTS idx_evidence_population ON evidence_records(population_group);
+CREATE INDEX IF NOT EXISTS idx_evidence_indicator ON evidence_records(indicator_code);
+
+

@@ -3,6 +3,7 @@ import { ThemeProvider } from './context/ThemeContext';
 import { LanguageProvider } from './context/LanguageContext';
 import { AuthProvider } from './context/AuthContext';
 import Navbar from './components/Navbar';
+import NutritionAssistant from './components/NutritionAssistant';
 import Dashboard from './pages/Dashboard';
 import Villages from './pages/Villages';
 import VillageDetail from './pages/VillageDetail';
@@ -47,6 +48,7 @@ export default function App() {
                   <Route path="*" element={<NotFound />} />
                 </Routes>
               </main>
+              <NutritionAssistant />
             </div>
           </BrowserRouter>
         </AuthProvider>
