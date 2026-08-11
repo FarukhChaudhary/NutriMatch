@@ -3,9 +3,11 @@
   "version": "1.0.0",
   "description": "NutriMatch API server",
   "main": "server.js",
+  "type": "module",
   "scripts": {
     "start": "node server.js",
     "dev": "nodemon server.js",
+    "ingest": "node scripts/ingest_nfhs5.js && node scripts/ingest_ifct2017.js",
     "seed": "node seed.js"
   },
   "dependencies": {

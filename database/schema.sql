@@ -87,3 +87,30 @@ CREATE INDEX IF NOT EXISTS idx_ngo_activity_village ON ngo_activities(village_id
 CREATE INDEX IF NOT EXISTS idx_ngo_activity_ngo ON ngo_activities(ngo_id);
 CREATE INDEX IF NOT EXISTS idx_pledge_village ON donor_pledges(village_id);
 CREATE INDEX IF NOT EXISTS idx_pledge_donor ON donor_pledges(donor_id);
+
+-- Official NFHS-5 District Indicators Data
+CREATE TABLE IF NOT EXISTS official_indicators (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  district_name VARCHAR(255) NOT NULL,
+  state_name VARCHAR(255) NOT NULL,
+  indicator_code VARCHAR(100) NOT NULL,
+  indicator_name TEXT NOT NULL,
+  prevalence_pct DECIMAL(5,2) NOT NULL,
+  survey_source VARCHAR(255) DEFAULT 'NFHS-5 (2019-21) via IIPS Factsheets',
+  created_at TIMESTAMP DEFAULT NOW()
+);
+
+-- ICMR-NIN IFCT 2017 Food Composition Data
+CREATE TABLE IF NOT EXISTS ifct_foods (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  food_code VARCHAR(20) UNIQUE NOT NULL,
+  food_name VARCHAR(255) NOT NULL,
+  category VARCHAR(100),
+  iron_mg DECIMAL(6,2),
+  zinc_mg DECIMAL(6,2),
+  folate_mcg DECIMAL(6,2),
+  vitamin_a_mcg DECIMAL(6,2),
+  citation TEXT DEFAULT 'ICMR-NIN Indian Food Composition Tables (IFCT 2017)',
+  created_at TIMESTAMP DEFAULT NOW()
+);
+
