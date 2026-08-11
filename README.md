@@ -76,6 +76,8 @@ NutriMatch integrates official public health surveys, food composition databases
 - **MoHFW WIFS / Anemia Mukt Bharat**: Weekly Iron and Folic Acid Supplementation Programme guidelines (60 mg elemental iron + 500 mcg Folic Acid).
 - **World Health Organization (WHO)**: *Guideline on Micronutrient Fortification & Vitamin A / Zinc-ORS supplementation*.
 
-## Module Log
-See [`MODULE_LOG.md`](./MODULE_LOG.md) for a full development narrative suitable for project walkthroughs and pitches.
+## Documentation & Context
+- See [`PROJECT_CONTEXT.md`](./PROJECT_CONTEXT.md) for full architecture, feature list, and data source context.
+- See [`MODULE_LOG.md`](./MODULE_LOG.md) for a step-by-step development narrative suitable for pitches and code walkthroughs.
+
 
