@@ -1,0 +1,94 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ─── Base resets ─── */
+*, *::before, *::after { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  margin: 0;
+  font-family: 'Inter', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  background-color: #fafaf8;
+  color: #3c3b2c;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.dark body {
+  background-color: #1a1a14;
+  color: #e8e8e0;
+}
+
+/* ─── Scrollbar styling ─── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #d4d4c8; border-radius: 999px; }
+.dark ::-webkit-scrollbar-thumb { background: #4a4938; }
+
+/* ─── Leaflet overrides ─── */
+.leaflet-container {
+  border-radius: 1rem;
+  z-index: 0;
+  font-family: 'Inter', sans-serif;
+}
+
+/* ─── Custom severity badges ─── */
+.severity-pill {
+  @apply inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold;
+}
+.severity-mild     { @apply bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300; }
+.severity-moderate { @apply bg-orange-100 text-orange-800 dark:bg-orange-900/40 dark:text-orange-300; }
+.severity-severe   { @apply bg-red-100 text-red-800 dark:bg-red-900/40 dark:text-red-300; }
+
+/* ─── Card animations ─── */
+.card-hover {
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+.card-hover:hover {
+  box-shadow: 0 8px 28px 0 rgba(0,0,0,0.12);
+  transform: translateY(-2px);
+}
+.dark .card-hover:hover {
+  box-shadow: 0 8px 28px 0 rgba(0,0,0,0.5);
+}
+
+/* ─── Deficiency color dots ─── */
+.dot-iron      { background-color: #e57373; }
+.dot-vitamin_a { background-color: #ffb74d; }
+.dot-zinc      { background-color: #81c784; }
+.dot-iodine    { background-color: #64b5f6; }
+.dot-folate    { background-color: #ba68c8; }
+
+/* ─── Skeleton loader ─── */
+.skeleton {
+  @apply animate-pulse bg-warm-200 dark:bg-warm-700 rounded-xl;
+}
+
+/* ─── Focus ring ─── */
+*:focus-visible {
+  outline: 2px solid #f97d17;
+  outline-offset: 2px;
+}
+
+/* ─── Page transition ─── */
+.page-enter {
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* ─── Gradient text ─── */
+.gradient-text {
+  background: linear-gradient(135deg, #f97d17 0%, #ea610d 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ─── Mobile touch targets ─── */
+@media (max-width: 640px) {
+  button, a[role="button"] {
+    min-height: 44px;
+    min-width: 44px;
+  }
+}
