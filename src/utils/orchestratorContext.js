@@ -12,6 +12,8 @@ export function createInitialContext(uiLanguage = 'en') {
     activeLocation: null,          // e.g. 'Sheopur'
     activeLocations: [],           // e.g. ['Sheopur', 'Bahraich'] for comparisons
     locationConstraint: 'NONE',    // 'HARD' | 'NONE'
+    activeState: null,             // e.g. 'Maharashtra'
+    stateConstraint: 'NONE',       // 'HARD' | 'NONE'
     activeBudget: null,            // e.g. 50000
     activeInventory: [],           // e.g. [{ item_name: 'rice', quantity: 200, unit: 'kg' }]
     activePopulationGroup: 'children_6_59_months',
@@ -22,7 +24,7 @@ export function createInitialContext(uiLanguage = 'en') {
 }
 
 /**
- * Extracts entities, locations, budgets, quantities, and explicit constraints from query text
+ * Extracts entities, locations, states, budgets, quantities, and explicit constraints from query text
  */
 export function extractEntitiesAndConstraints(queryText, currentContext = null) {
   if (!queryText || typeof queryText !== 'string') {
@@ -43,7 +45,19 @@ export function extractEntitiesAndConstraints(queryText, currentContext = null) 
   else if (isHindi) context.activeLanguage = 'hi';
   else if (/[\u0900-\u097F]/.test(queryText)) context.activeLanguage = 'hi';
 
-  // 2. Location Extraction (matching against known VILLAGES list)
+  // 2. State Extraction (Geographic Hierarchy Level 2)
+  let extractedState = null;
+  if (queryLower.includes('maharashtra') || queryLower.includes('महाराष्ट्र')) extractedState = 'Maharashtra';
+  else if (queryLower.includes('rajasthan') || queryLower.includes('राजस्थान')) extractedState = 'Rajasthan';
+  else if (queryLower.includes('uttar pradesh') || queryLower.includes('up') || queryLower.includes('उत्तर प्रदेश')) extractedState = 'Uttar Pradesh';
+  else if (queryLower.includes('madhya pradesh') || queryLower.includes('mp') || queryLower.includes('मध्य प्रदेश')) extractedState = 'Madhya Pradesh';
+
+  if (extractedState) {
+    context.activeState = extractedState;
+    context.stateConstraint = 'HARD';
+  }
+
+  // 3. Location Extraction (Village / District level)
   const matchedLocations = [];
   VILLAGES.forEach(v => {
     const vNameLower = v.name.toLowerCase();
@@ -76,6 +90,8 @@ export function extractEntitiesAndConstraints(queryText, currentContext = null) 
       context.activeLocation = null;
       context.activeLocations = [];
       context.locationConstraint = 'NONE';
+      context.activeState = null;
+      context.stateConstraint = 'NONE';
     }
   } else if (uniqueLocations.length > 1 || queryLower.includes('compare') || queryLower.includes('vs') || queryLower.includes('तुलना')) {
     context.activeLocations = uniqueLocations.length > 0 ? uniqueLocations : context.activeLocations;
@@ -87,7 +103,7 @@ export function extractEntitiesAndConstraints(queryText, currentContext = null) 
     context.locationConstraint = 'HARD';
   }
 
-  // 3. Budget Extraction (e.g., ₹50,000, 1 lakh, 50000, 10,000)
+  // 4. Budget Extraction (e.g., ₹50,000, 1 lakh, 50000, 10,000)
   const budgetMatch = queryText.match(/(?:₹|rs\.?|inr)?\s*(\d+(?:,\d+)*(?:\.\d+)?)\s*(lakh|lakhs|लाख)?/i);
   if (budgetMatch) {
     let amount = parseFloat(budgetMatch[1].replace(/,/g, ''));
@@ -99,13 +115,13 @@ export function extractEntitiesAndConstraints(queryText, currentContext = null) 
     }
   }
 
-  // 4. Inventory Extraction
+  // 5. Inventory Extraction
   const extractedInventory = normalizeMultilingualInventory(queryText);
   if (extractedInventory.length > 0) {
     context.activeInventory = extractedInventory;
   }
 
-  // 5. Nutrient / Food extraction
+  // 6. Nutrient / Food extraction
   let targetNutrient = null;
   if (queryLower.includes('iron') || queryLower.includes('आयरन') || queryLower.includes('आयर्न') || queryLower.includes('anaemia') || queryLower.includes('anemia')) targetNutrient = 'iron';
   else if (queryLower.includes('zinc') || queryLower.includes('जिंक')) targetNutrient = 'zinc';
@@ -118,6 +134,8 @@ export function extractEntitiesAndConstraints(queryText, currentContext = null) 
       locations: uniqueLocations,
       location: context.activeLocation,
       locationConstraint: context.locationConstraint,
+      state: context.activeState,
+      stateConstraint: context.stateConstraint,
       budget: context.activeBudget,
       inventory: context.activeInventory,
       targetNutrient,

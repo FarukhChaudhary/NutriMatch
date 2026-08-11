@@ -8,7 +8,7 @@ export const OFFICIAL_IFCT2017_FOODS = [
   {
     food_code: 'A001',
     food_name: 'Fortified Rice (Iron-Fortified)',
-    category: 'Cereals and Millets',
+    category: 'Fortified Staples',
     deficiency_addressed: 'iron',
     iron_mg_100g: 20,
     zinc_mg_100g: 1.4,
@@ -17,6 +17,32 @@ export const OFFICIAL_IFCT2017_FOODS = [
     bioavailability_rating: 'High',
     citation: 'ICMR-NIN IFCT (2017) & FSSAI Operational Guidelines on Food Fortification',
     description: 'Iron-fortified rice distributed through Public Distribution System (PDS) provides 20mg iron per 100g cooked grain.'
+  },
+  {
+    food_code: 'A003',
+    food_name: 'Raw Milled Rice (Plain White Rice)',
+    category: 'Cereals and Millets',
+    deficiency_addressed: 'energy_staple',
+    iron_mg_100g: 0.7,
+    zinc_mg_100g: 1.3,
+    folate_mcg_100g: 10,
+    vitamin_a_mcg_100g: 0,
+    bioavailability_rating: 'Medium',
+    citation: 'ICMR-NIN Indian Food Composition Tables (IFCT 2017), Code A003',
+    description: 'Standard unfortified white rice providing 0.7mg iron per 100g. Primarily functions as a caloric staple.'
+  },
+  {
+    food_code: 'A002',
+    food_name: 'Whole Wheat Flour (Atta)',
+    category: 'Cereals and Millets',
+    deficiency_addressed: 'iron',
+    iron_mg_100g: 4.9,
+    zinc_mg_100g: 2.2,
+    folate_mcg_100g: 30,
+    vitamin_a_mcg_100g: 0,
+    bioavailability_rating: 'Medium',
+    citation: 'ICMR-NIN Indian Food Composition Tables (IFCT 2017), Code A002',
+    description: 'Whole wheat flour yielding 4.9mg iron and 30mcg folate per 100g.'
   },
   {
     food_code: 'A012',
@@ -112,6 +138,55 @@ export const OFFICIAL_IFCT2017_FOODS = [
 ];
 
 /**
+ * 4-Tier Safe Food Matching Hierarchy
+ * Prevents plain rice from being silently mapped to fortified rice.
+ */
+export function findIFCTRecord(item) {
+  if (!item) return null;
+  const itemName = (item.item_name || '').toLowerCase().trim();
+  if (!itemName) return null;
+
+  // Tier 1: Exact food_code match
+  if (item.food_code) {
+    const codeMatch = OFFICIAL_IFCT2017_FOODS.find(f => f.food_code === item.food_code);
+    if (codeMatch) return codeMatch;
+  }
+
+  // Tier 2: Controlled Aliases (Explicit Distinction for Fortified vs Ordinary Rice/Wheat)
+  if (itemName.includes('fortified rice') || itemName.includes('frk') || itemName.includes('iron-fortified')) {
+    return OFFICIAL_IFCT2017_FOODS.find(f => f.food_code === 'A001'); // Fortified Rice (20mg iron)
+  }
+  if (itemName === 'rice' || itemName === 'plain rice' || itemName.includes('chawal') || itemName.includes('taandool') || itemName.includes('white rice')) {
+    return OFFICIAL_IFCT2017_FOODS.find(f => f.food_code === 'A003'); // Plain White Rice (0.7mg iron)
+  }
+  if (itemName === 'wheat' || itemName.includes('atta') || itemName.includes('gehun') || itemName.includes('gahoo')) {
+    return OFFICIAL_IFCT2017_FOODS.find(f => f.food_code === 'A002'); // Whole Wheat Flour (4.9mg iron)
+  }
+  if (itemName.includes('masoor') || itemName.includes('dal') || itemName.includes('lentil')) {
+    return OFFICIAL_IFCT2017_FOODS.find(f => f.food_code === 'B004'); // Masoor Dal
+  }
+  if (itemName.includes('moringa') || itemName.includes('drumstick')) {
+    return OFFICIAL_IFCT2017_FOODS.find(f => f.food_code === 'D021'); // Moringa Leaves
+  }
+  if (itemName.includes('jaggery') || itemName.includes('gur') || itemName.includes('gul')) {
+    return OFFICIAL_IFCT2017_FOODS.find(f => f.food_code === 'A012'); // Jaggery
+  }
+  if (itemName.includes('sesame') || itemName.includes('til')) {
+    return OFFICIAL_IFCT2017_FOODS.find(f => f.food_code === 'H010'); // Sesame Seeds
+  }
+  if (itemName.includes('salt') || itemName.includes('dfs')) {
+    return OFFICIAL_IFCT2017_FOODS.find(f => f.food_code === 'M001'); // Double Fortified Salt
+  }
+
+  // Tier 3: Exact normalized food_name match
+  const exactMatch = OFFICIAL_IFCT2017_FOODS.find(f => f.food_name.toLowerCase() === itemName);
+  if (exactMatch) return exactMatch;
+
+  // Tier 4: Safe Substring fallback only if no ambiguity exists
+  return OFFICIAL_IFCT2017_FOODS.find(f => f.food_name.toLowerCase().includes(itemName));
+}
+
+/**
  * Calculates exact nutrient yield and estimated reach using strictly verified ICMR-NIN IFCT 2017 values
  */
 export function calculateNutrientContribution(inventoryItems) {
@@ -121,10 +196,7 @@ export function calculateNutrientContribution(inventoryItems) {
   let totalVitaminAMcg = 0;
 
   const itemBreakdown = inventoryItems.map(item => {
-    // Match with verified IFCT 2017 record by code or name
-    const ifctRecord = OFFICIAL_IFCT2017_FOODS.find(
-      f => f.food_code === item.food_code || f.food_name.toLowerCase().includes(item.item_name.toLowerCase())
-    );
+    const ifctRecord = findIFCTRecord(item);
 
     if (!ifctRecord) {
       return {
@@ -151,16 +223,24 @@ export function calculateNutrientContribution(inventoryItems) {
     totalFolateMcg += folateMcg;
     totalVitaminAMcg += vitaminAMcg;
 
+    const assumptionNotice = ifctRecord.food_code === 'A003'
+      ? 'Assumes plain unfortified white rice (~0.7mg iron/100g). If donating iron-fortified rice, reach is significantly higher.'
+      : ifctRecord.food_code === 'A001'
+      ? 'Assumes iron-fortified rice kernels (~20mg iron/100g) per FSSAI fortification standards.'
+      : null;
+
     return {
       ...item,
       ifctMatched: true,
       foodCode: ifctRecord.food_code,
+      foodName: ifctRecord.food_name,
       citation: ifctRecord.citation,
       ironMgProvided: Math.round(ironMg * 10) / 10,
       zincMgProvided: Math.round(zincMg * 10) / 10,
       folateMcgProvided: Math.round(folateMcg * 10) / 10,
       vitaminAMcgProvided: Math.round(vitaminAMcg * 10) / 10,
       deficiencyAddressed: ifctRecord.deficiency_addressed,
+      assumptionNotice,
     };
   });
 
@@ -190,7 +270,11 @@ export function calculateNutrientContribution(inventoryItems) {
 }
 
 /**
- * Matches available inventory against high-need regions based on aid gaps
+ * Matches available inventory against high-need regions based on aid gaps and quantitative gap reduction
+ *
+ * Scoring Formula:
+ * ResourceSuitability = NutrientMatch * SeverityWeight * AidGapPct * PotentialCoveragePct
+ * FinalRelevanceScore = 0.5 * ResourceSuitability + 0.5 * BasePriorityScore
  */
 export function matchInventoryToRegions(inventoryItems, villages, deficiencyRecords, ngoActivities = [], donorPledges = []) {
   const nutrientAnalysis = calculateNutrientContribution(inventoryItems);
@@ -201,9 +285,36 @@ export function matchInventoryToRegions(inventoryItems, villages, deficiencyReco
     const gapInfo = calculateAidCoverage(village, vDefs, ngoActivities, donorPledges);
     const profile = buildNutritionProfile(village, vDefs, 'district');
 
-    // Relevance score = matches between inventory primary nutrient yield and uncovered village gaps
+    // 1. Uncovered gap matching
     const relevantGaps = gapInfo.uncoveredDeficiencies.filter(def => targetNutrients.has(def));
-    const relevanceScore = (relevantGaps.length * 40) + (profile.priorityScore * 0.6);
+    const hasNutrientMatch = relevantGaps.length > 0 || targetNutrients.has('iron') && gapInfo.uncoveredDeficiencies.includes('iron');
+
+    // 2. Quantitative Gap Coverage Calculation
+    const currentGapPct = Math.max(0, 100 - gapInfo.aidCoveragePct);
+    const totalChildDays = Math.max(
+      nutrientAnalysis.estimatedImpact.childDaysIron,
+      nutrientAnalysis.estimatedImpact.childDaysZinc,
+      nutrientAnalysis.estimatedImpact.childDaysFolate,
+      nutrientAnalysis.estimatedImpact.childDaysVitA
+    );
+
+    // Potential percentage of village children reached for 30 days by this inventory
+    const targetChildPop = village.child_population || 2000;
+    const potentialCoveragePct = Math.min(100, ((totalChildDays / (targetChildPop * 30)) * 100));
+
+    // Severity weighting based on top deficiency severity
+    const topDef = vDefs.sort((a, b) => b.prevalence_pct - a.prevalence_pct)[0];
+    const severityMultiplier = topDef?.severity === 'severe' ? 1.3 : topDef?.severity === 'moderate' ? 1.1 : 0.9;
+
+    // Resource Suitability score incorporates nutrient match, current gap size, quantity-driven coverage, and severity
+    const resourceSuitability = hasNutrientMatch
+      ? Math.min(100, (currentGapPct * 0.4) + (potentialCoveragePct * 0.4 * severityMultiplier) + 20)
+      : Math.min(60, (currentGapPct * 0.3) + (potentialCoveragePct * 0.2));
+
+    // Final Relevance Score combines Resource Suitability (50%) and Base Priority Score (50%)
+    const relevanceScore = Math.round((0.5 * resourceSuitability) + (0.5 * profile.priorityScore));
+
+    const projectedRemainingGapPct = Math.max(0, currentGapPct - Math.round(potentialCoveragePct));
 
     return {
       villageId: village.id,
@@ -213,11 +324,14 @@ export function matchInventoryToRegions(inventoryItems, villages, deficiencyReco
       priorityScore: profile.priorityScore,
       quadrant: gapInfo.quadrant,
       aidGapPct: gapInfo.aidGapPct,
+      currentGapPct,
+      potentialCoveragePct: Math.round(potentialCoveragePct * 10) / 10,
+      projectedRemainingGapPct,
       relevantGaps,
-      relevanceScore: Math.round(relevanceScore),
+      relevanceScore,
       recommendationReason: relevantGaps.length > 0
-        ? `Directly addresses uncovered ${relevantGaps.join(', ')} deficiency gap in ${village.name}`
-        : `Secondary nutritional support for ${village.name}`,
+        ? `Directly addresses uncovered ${relevantGaps.join(', ')} gap in ${village.name} (~${Math.round(potentialCoveragePct)}% child coverage)`
+        : `Provides caloric staple support for ${village.name} (Current Aid Gap: ${gapInfo.aidGapPct}%)`,
     };
   }).sort((a, b) => b.relevanceScore - a.relevanceScore);
 

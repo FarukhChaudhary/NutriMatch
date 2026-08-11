@@ -248,23 +248,27 @@ export function queryRAGKnowledge(queryText, options = {}) {
     }
   }
 
-  // Task D: Global Donation Location Recommendation (Unconstrained inventory matching e.g. "I have 200 kg rice. Where should I donate?")
+  // Task D: Global / State Donation Location Recommendation (e.g. "I have 200 kg rice. Where should I donate in Maharashtra?")
   if (updatedContext.activeInventory.length > 0 && updatedContext.locationConstraint !== 'HARD') {
     const matchResult = executeInventoryMatchingTool({
       inventory: updatedContext.activeInventory,
       locationConstraint: 'NONE',
+      stateConstraint: updatedContext.stateConstraint,
+      activeState: updatedContext.activeState,
     });
 
     if (matchResult.success && matchResult.topRecommendedRegion) {
       const topMatch = matchResult.topRecommendedRegion;
       const topMatches = matchResult.regionMatches.slice(0, 3);
+      const breakdown = matchResult.nutrientAnalysis.itemBreakdown[0] || {};
+      const foodNotice = breakdown.assumptionNotice || 'Staple grain donation providing essential energy support.';
 
       return {
         explanation: lang === 'hi'
           ? `आपके दान के लिए सबसे उपयुक्त स्थान ${topMatch.villageName} (${topMatch.district}) है।`
           : lang === 'mr'
           ? `आपल्या योगदानासाठी सर्वात योग्य ठिकाण ${topMatch.villageName} (${topMatch.district}) आहे.`
-          : `The top recommended location for your donation is ${topMatch.villageName} (${topMatch.district}).`,
+          : `The top recommended location for your donation is ${topMatch.villageName} (${topMatch.district}, ${topMatch.state}).`,
         answer: `Top recommended location: ${topMatch.villageName}`,
         citations: [],
         queryGrounded: true,
@@ -276,14 +280,14 @@ export function queryRAGKnowledge(queryText, options = {}) {
             aidGapPct: m.aidGapPct,
             quadrant: m.quadrant,
           })),
-          whyThisLocation: `${topMatch.villageName} has an identified priority score of ${topMatch.priorityScore}/100 and aid gap of ${topMatch.aidGapPct}%.`,
+          whyThisLocation: `${topMatch.villageName} has an identified priority score of ${topMatch.priorityScore}/100, aid gap of ${topMatch.aidGapPct}%, and potential child coverage of ~${Math.round(topMatch.potentialCoveragePct)}%.`,
           yourDonation: updatedContext.activeInventory,
           estimatedReach: { beneficiaries: matchResult.nutrientAnalysis.estimatedImpact.maxBeneficiaries30Days || 50, unitLabel: 'children supported (1 month)' },
-          whatFoodProvides: 'Staple grain donation providing essential energy support.',
-          whatCouldComplement: 'Adding pulses or fortified salt complements this donation for micronutrient gaps.',
+          whatFoodProvides: foodNotice,
+          whatCouldComplement: 'Adding pulses (Masoor Dal) or Double Fortified Salt complements this donation for micronutrient gaps.',
         },
         evidence: { source: 'NFHS-5 Survey & ICMR-NIN IFCT 2017', populationGroup: 'children_6_59_months', geographyLevel: 'district', surveyYear: '2019-2021', confidence: 'MEDIUM' },
-        technicalDetails: { toggleLabel: lang === 'hi' ? 'वैज्ञानिक जानकारी देखें' : lang === 'mr' ? 'तांत्रिक माहिती पहा' : 'View technical details', rawFormula: 'RelevanceScore = (UncoveredGapsMatched * 40) + (PriorityScore * 0.6)' },
+        technicalDetails: { toggleLabel: lang === 'hi' ? 'वैज्ञानिक जानकारी देखें' : lang === 'mr' ? 'तांत्रिक माहिती पहा' : 'View technical details', rawFormula: 'RelevanceScore = 0.5 * (NutrientMatch * Severity * AidGapPct * PotentialCoveragePct) + 0.5 * BasePriorityScore' },
         intent: 'DONATION_LOCATION',
         language: lang,
         disclaimer: MEDICAL_DISCLAIMER[lang] || MEDICAL_DISCLAIMER.en,

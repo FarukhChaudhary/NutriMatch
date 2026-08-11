@@ -111,19 +111,25 @@ export function executeBudgetOptimizationTool({ locationName, budgetINR, maxInte
 /**
  * Tool 4: Inventory Matching Contract (with Hard Location Constraint Enforcement)
  */
-export function executeInventoryMatchingTool({ inventory = [], locationConstraint = 'NONE', hardLocationName = null }) {
+export function executeInventoryMatchingTool({ inventory = [], locationConstraint = 'NONE', hardLocationName = null, stateConstraint = 'NONE', activeState = null }) {
   const mockInventory = inventory.length > 0 ? inventory : [
     { item_name: 'rice', quantity: 200, unit: 'kg' },
-    { item_name: 'wheat', quantity: 200, unit: 'kg' },
   ];
 
   let targetVillages = VILLAGES;
 
-  // HARD Location Constraint Priority: If user specifies "in Sheopur", constrain strictly to Sheopur!
+  // 1. HARD Village/District Location Constraint (e.g. "in Sheopur")
   if (locationConstraint === 'HARD' && hardLocationName) {
     const hardVillage = VILLAGES.find(v => v.name.toLowerCase() === hardLocationName.toLowerCase() || v.district.toLowerCase() === hardLocationName.toLowerCase());
     if (hardVillage) {
       targetVillages = [hardVillage];
+    }
+  }
+  // 2. HARD State Geographic Constraint (e.g. "in Maharashtra")
+  else if (stateConstraint === 'HARD' && activeState) {
+    const stateVillages = VILLAGES.filter(v => v.state.toLowerCase() === activeState.toLowerCase());
+    if (stateVillages.length > 0) {
+      targetVillages = stateVillages;
     }
   }
 
@@ -131,8 +137,8 @@ export function executeInventoryMatchingTool({ inventory = [], locationConstrain
 
   return {
     success: true,
-    isHardConstrained: locationConstraint === 'HARD',
-    constrainedLocation: hardLocationName,
+    isHardConstrained: locationConstraint === 'HARD' || stateConstraint === 'HARD',
+    constrainedLocation: hardLocationName || activeState,
     inventoryParsed: mockInventory,
     nutrientAnalysis: result.nutrientAnalysis,
     regionMatches: result.regionMatches,
